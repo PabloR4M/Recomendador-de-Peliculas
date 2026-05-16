@@ -2,18 +2,19 @@ import streamlit as st
 from agentes import agente_perfilador, agente_api, agente_orquestador
 
 def procesar_voto_panel(id_peli, tipo_voto):
+
     # Se carga la memoria actual del usuario
     perfil = agente_perfilador.obtener_perfil(st.session_state.usuario_temp)
     likes = perfil.get("peliculas_likeadas", [])
     dislikes = perfil.get("peliculas_dislikeadas", [])
     
-    # Se añade el nuevo conocimiento a las listas
+    # Se actualizan las listas
     if tipo_voto == "like" and id_peli not in likes:
         likes.append(id_peli)
     elif tipo_voto == "dislike" and id_peli not in dislikes:
         dislikes.append(id_peli)
         
-    # Se guarda el perfil actualizado en el disco
+    # Se guarda el perfil actualizado
     agente_perfilador.crear_perfil(
         st.session_state.usuario_temp,
         perfil["generos_favoritos"],
@@ -93,7 +94,7 @@ def mostrar():
                             st.image(f"https://image.tmdb.org/t/p/w200{peli['poster_path']}", use_container_width=True)
                         
                         st.markdown(f'<div class="titulo-peli" title="{peli["title"]}">{peli["title"]}</div>', unsafe_allow_html=True)
-                        st.caption(f"📅 {peli.get('release_date', '')[:4]} | ⏱️ {peli.get('runtime', 0)} min")
+                        st.caption(f"📅 Fecha: {peli.get('release_date', '')[:4]} | ⏱ Duración: {peli.get('runtime', 0)} min")
                         
                         score = peli['match_score'] / 100
                         st.progress(score, text=f"Match {peli['match_score']}%")
@@ -124,7 +125,7 @@ def mostrar():
                     st.session_state.busqueda_page += 1
                     st.rerun()
             with col_btn2:
-                if st.button("⚙️ Cambiar Filtros", use_container_width=True):
+                if st.button(" Cambiar Filtros", use_container_width=True):
                     st.session_state.mostrar_filtros = True
                     st.session_state.buscar_trigger = False
                     st.rerun()
